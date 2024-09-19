@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/user.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -63,13 +68,33 @@ class _RegisterPageState extends State<RegisterPage> {
     ));
   }
 
+  void _saveUser(User user) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setString("user", jsonEncode(user));
+    Navigator.pop(context);
+  }
+
   void _onRegisterButtonClick() {
     if (_email.text.isEmpty || _password.text.isEmpty) {
       _showErrorMsg("Error: Email and Password are required");
     } else if (_password.text != _passwordConfirm.text) {
       _showErrorMsg("Passwords don't match");
-    }else{
-      // TODO: Store form
+    } else {
+      var genre = _genre == Genre.male ? "Male" : "Female";
+      var user = User(
+        _name.text,
+        _email.text,
+        _password.text,
+        _city,
+        genre,
+        _isActionFavorite,
+        _isThrillerFavorite,
+        _isAdventureFavorite,
+        _isComicFavorite,
+        _bornDate.toString(),
+      );
+
+      _saveUser(user);
     }
   }
 
