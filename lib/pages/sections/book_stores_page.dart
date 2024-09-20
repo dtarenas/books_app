@@ -10,6 +10,10 @@ class BookStoresPage extends StatefulWidget {
 class _BookStoresPageState extends State<BookStoresPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold(
+      body: Center(
+        child: Text("Book Stores Page"),
+      ),
+    );
   }
 }

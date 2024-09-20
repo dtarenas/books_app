@@ -1,5 +1,10 @@
-import 'package:books_app/pages/login_page.dart';
+import 'package:books_app/pages/drawer_page.dart';
+import 'package:books_app/pages/home_page.dart';
+import 'package:books_app/pages/auth/login_page.dart';
+import 'package:books_app/pages/navigation_bar_page.dart';
+import 'package:books_app/pages/tabs_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -9,8 +14,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-
-
   @override
   void initState() {
     _closeSplash();
@@ -28,9 +31,19 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> _closeSplash() async {
     Future.delayed(const Duration(seconds: 2), () async {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()));
+      var prefs = await SharedPreferences.getInstance();
+      var isUserLogged = prefs.getBool("isUserLogged") ?? false;
+      if (isUserLogged) {
+        Navigator.pushReplacement(
+            context,
+            //MaterialPageRoute(builder: (context) => const NavigationBarPage()));
+            //MaterialPageRoute(builder: (context) => const TabsPage()));
+            MaterialPageRoute(builder: (context) => const DrawerPage()));
+      } else {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
+      }
     });
   }
 }
