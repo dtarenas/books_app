@@ -1,7 +1,7 @@
 class User {
   var _name;
   var _email;
-  var _password;
+  var _uid;
   var _city;
   var _genre;
   var _isActionFavorite;
@@ -13,7 +13,7 @@ class User {
   Map<String, dynamic> toJson() => {
         "name": _name,
         "email": _email,
-        "password": _password,
+        "uid": _uid,
         "city": _city,
         "genre": _genre,
         "isActionFavorite": _isActionFavorite,
@@ -28,7 +28,7 @@ class User {
   User.fromJson(Map<String, dynamic> json) {
     _name = json['name'];
     _email = json['email'];
-    _password = json['password'];
+    _uid = json['uid'];
     _city = json['city'];
     _genre = json['genre'];
     _isActionFavorite = json['isActionFavorite'];
@@ -88,10 +88,10 @@ class User {
     _city = value;
   }
 
-  get password => _password;
+  get uid => _uid;
 
-  set password(value) {
-    _password = value;
+  set uid(value) {
+    _uid = value;
   }
 
   set email(value) {
@@ -101,7 +101,7 @@ class User {
   User(
       this._name,
       this._email,
-      this._password,
+      this._uid,
       this._city,
       this._genre,
       this._isActionFavorite,

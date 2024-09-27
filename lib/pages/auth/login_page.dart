@@ -5,6 +5,8 @@ import 'package:books_app/pages/home_page.dart';
 import 'package:books_app/pages/auth/register_page.dart';
 import 'package:books_app/pages/navigation_bar_page.dart';
 import 'package:books_app/pages/tabs_page.dart';
+import 'package:books_app/repository/firabase_api.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,22 +16,23 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() => _signInPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _signInPageState extends State<LoginPage> {
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _firebaseApi = FirebaseApi();
 
-  User user = User.Empty();
+  //User user = User.Empty();
 
-  void _loadUser() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Map<String, dynamic> userMap = jsonDecode(prefs.getString("user") ?? "");
-    user = User.fromJson(userMap);
-    print(user.email);
-    print(user.name);
-  }
+  // void _loadUser() async{
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   Map<String, dynamic> userMap = jsonDecode(prefs.getString("user") ?? "");
+  //   user = User.fromJson(userMap);
+  //   print(user.email);
+  //   print(user.name);
+  // }
 
   void _showErrorMsg(String msg) {
     final scaffold = ScaffoldMessenger.of(context);
@@ -41,20 +44,35 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 
-  void _login() {
-    if (_email.text == user.email && _password.text == user.password){
-      _saveSession();
-      Navigator.pushReplacement(
+  Future<void> _signIn() async {
+    //if (_email.text == user.email && _password.text == user.password){
+      //_saveSession();
+
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: _email.text);
+
+
+      var signInResult = await _firebaseApi.signIn(_email.text, _password.text);
+      if (signInResult == 'invalid-email') {
+        _showErrorMsg('Email format is invalid');
+      } else if (signInResult == 'invalid-credential') {
+        _showErrorMsg('Check your credentials');
+      } else if (signInResult == 'network-request-failed') {
+        _showErrorMsg('Internet issues');
+      } else {
+        _showErrorMsg('SignIn success!!');
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const DrawerPage()
-              //builder: (context) => const NavigationBarPage()
-              //builder: (context) => const TabsPage()
+            //  builder: (context) => const DrawerPage()
+            builder: (context) => const NavigationBarPage()
+            //builder: (context) => const TabsPage()
           ),
-      );
-    } else {
-      _showErrorMsg("User and password are invalid");
-    }
+        );
+      }
+
+    // } else {
+    //   _showErrorMsg("User and password are invalid");
+    // }
   }
 
   void _saveSession() async{
@@ -65,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState(){
-    _loadUser();
+    //loadUser();
     super.initState();
   }
 
@@ -106,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      _login();
+                      _signIn();
                     },
                     child: const Text("Log In")),
                 const SizedBox(

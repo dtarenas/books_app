@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
 import '../../repository/firabase_api.dart';
@@ -18,7 +15,6 @@ enum Genre { male, female }
 
 class _RegisterPageState extends State<RegisterPage> {
   final FirebaseApi _firebaseApi = FirebaseApi();
-
 
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -72,10 +68,24 @@ class _RegisterPageState extends State<RegisterPage> {
     ));
   }
 
-  void _saveUser(User user) async {
-    var prefs = await SharedPreferences.getInstance();
-    prefs.setString("user", jsonEncode(user));
-    Navigator.pop(context);
+  void _registerUser(User user, String password) async {
+    // var prefs = await SharedPreferences.getInstance();
+    // prefs.setString("user", jsonEncode(user));
+    var registerResult =
+        await _firebaseApi.registerUser(user.email, password);
+    if (registerResult == 'invalid-email') {
+      _showErrorMsg('Email format is invalid');
+    } else if (registerResult == 'email-already-in-use') {
+      _showErrorMsg('Email already exists');
+    } else if (registerResult == 'weak-password') {
+      _showErrorMsg('Password is weak');
+    } else if (registerResult == 'network-request-failed') {
+      _showErrorMsg('Internet issues');
+    } else {
+      _showErrorMsg('User has been registered successfully');
+      user.uid = registerResult;
+      _storeUserInFireStorage(user);
+    }
   }
 
   void _onRegisterButtonClick() {
@@ -88,17 +98,28 @@ class _RegisterPageState extends State<RegisterPage> {
       var user = User(
         _name.text,
         _email.text,
-        _password.text,
+        "",
         _city,
         genre,
         _isActionFavorite,
         _isThrillerFavorite,
         _isAdventureFavorite,
         _isComicFavorite,
-        _bornDate.toString(),
+        _bornDate,
       );
 
-      _saveUser(user);
+      _registerUser(user, _password.text);
+    }
+  }
+
+  void _storeUserInFireStorage(User user) async {
+    var firebaseResult = await _firebaseApi.storeUserInFireStorage(user);
+    if (firebaseResult == 'network-request-failed') {
+      _showErrorMsg('Internet issues');
+    } else {
+      _showErrorMsg('Data stored in Firestorage');
+      print('Ok ${firebaseResult}');
+      Navigator.pop(context); //To go back
     }
   }
 
