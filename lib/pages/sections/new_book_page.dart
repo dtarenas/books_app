@@ -27,6 +27,7 @@ class _NewBookPageState extends State<NewBookPage> {
   bool _isComicGenre = false;
   bool _isSuspenseGenre = false;
 
+
   Future<void> _saveBook() async {
     var book = Book("", _name.text, _author.text, _pages.text, _rating,
         _isActionGenre, _isAdventureGenre, _isThrillerGenre, _isComicGenre, "");

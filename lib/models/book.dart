@@ -10,6 +10,7 @@ class Book {
   var _isComicGenre;
   var _urlPicture;
 
+
   Map<String, dynamic> toJson() => {
         'id': _id,
         'name': _name,
