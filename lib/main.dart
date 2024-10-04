@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -11,6 +12,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   runApp(const MyApp());
 }
 

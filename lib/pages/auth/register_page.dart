@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/user.dart';
-import '../../repository/firabase_api.dart';
+import '../../repository/firebase_api.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

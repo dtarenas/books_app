@@ -5,7 +5,6 @@ import 'package:books_app/pages/navigation_bar_page.dart';
 import 'package:books_app/pages/tabs_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -31,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _closeSplash() async {
-    Future.delayed(const Duration(seconds: 2), () async {
+    Future.delayed(const Duration(seconds: 10), () async {
      // var prefs = await SharedPreferences.getInstance();
       //var isUserLogged = prefs.getBool("isUserLogged") ?? false;
       FirebaseAuth.instance

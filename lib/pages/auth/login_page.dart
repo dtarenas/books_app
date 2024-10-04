@@ -1,16 +1,13 @@
-import 'dart:convert';
-
 import 'package:books_app/pages/drawer_page.dart';
 import 'package:books_app/pages/home_page.dart';
 import 'package:books_app/pages/auth/register_page.dart';
 import 'package:books_app/pages/navigation_bar_page.dart';
 import 'package:books_app/pages/tabs_page.dart';
-import 'package:books_app/repository/firabase_api.dart';
+import 'package:books_app/repository/firebase_api.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/user.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
