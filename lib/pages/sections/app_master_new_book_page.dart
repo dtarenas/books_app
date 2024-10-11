@@ -1,23 +1,23 @@
 import 'dart:io';
 
+import 'package:books_app/repository/app_master_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../models/request_new_book_app_master.dart';
 
-import '../../models/local_book.dart';
-import '../../repository/firebase_api.dart';
-
-class NewLocalBookPage extends StatefulWidget {
-  const NewLocalBookPage({super.key});
+class AppMasterNewBookPage extends StatefulWidget {
+  const AppMasterNewBookPage({super.key});
 
   @override
-  State<NewLocalBookPage> createState() => _NewLocalBookPageState();
+  State<AppMasterNewBookPage> createState() => _AppMasterNewBookPageState();
 }
 
-class _NewLocalBookPageState extends State<NewLocalBookPage> {
-  final FirebaseApi _firebaseApi = FirebaseApi();
+class _AppMasterNewBookPageState extends State<AppMasterNewBookPage> {
+  final AppMasterAPI _appMasterAPI = AppMasterAPI();
+
   final _name = TextEditingController();
   final _author = TextEditingController();
   final _pages = TextEditingController();
@@ -29,15 +29,30 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
   bool _isSuspenseGenre = false;
 
 
-  Future<void> _saveLocalBook() async {
-    var localBook = LocalBook("", _name.text, _author.text, _pages.text, _rating,
-        _isActionGenre, _isAdventureGenre, _isThrillerGenre, _isComicGenre, "");
-    var result = await _firebaseApi.createBook(localBook, image!);
-    if (result == "network-request-failed") {
-      showMessage("Network issue");
-    } else {
-      //Creacion exitosa
+  Future<void> _saveBook() async {
+    var book = Book(
+        id: null,
+        name: _name.text,
+        author: _author.text,
+        pages: int.parse(_pages.text),
+        isActionGenre: _isActionGenre,
+        isAdventureGenre: _isAdventureGenre,
+        isDramaGenre: _isThrillerGenre,
+        isFantasyGenre: _isComicGenre,
+        isFictionGenre: false,
+        isRomanceGenre: false,
+        isSuspenseGenre: false,
+        isTerrorGenre: false,
+        urlPicture: '',
+        rating: _rating);
+
+    var requestApiCreateBook = RequestNewBookAppMaster(book: book);
+    var resultApi = await _appMasterAPI.createBook(requestApiCreateBook);
+    if (resultApi.success!) {
+      showMessage('A new Book created successfully');
       Navigator.pop(context);
+    } else {
+      showMessage('Something went wrong');
     }
   }
 
@@ -76,7 +91,7 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New LocalBook'),
+        title: const Text('New Book'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -92,10 +107,10 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
                     image != null
                         ? Image.file(image!, width: 150, height: 150)
                         : const Image(
-                            image: AssetImage('assets/images/logo.png'),
-                            width: 150,
-                            height: 150,
-                          ),
+                      image: AssetImage('assets/images/logo.png'),
+                      width: 150,
+                      height: 150,
+                    ),
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -138,7 +153,7 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
                   keyboardType: TextInputType.number,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) =>
-                      value!.isNumber() ? null : "Input numbers only"),
+                  value!.isNumber() ? null : "Input numbers only"),
               const SizedBox(
                 height: 16.0,
               ),
@@ -149,7 +164,8 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
                 allowHalfRating: true,
                 itemCount: 5,
                 itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => const Icon(
+                itemBuilder: (context, _) =>
+                const Icon(
                   Icons.star,
                   color: Colors.amber,
                 ),
@@ -161,7 +177,7 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
                 height: 16.0,
               ),
               const Text(
-                "LocalBook's Genre",
+                "Book's Genre",
                 style: TextStyle(fontSize: 20),
               ),
               const SizedBox(
@@ -241,9 +257,9 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  _saveLocalBook();
+                  _saveBook();
                 },
-                child: const Text('Save LocalBook'),
+                child: const Text('Save book'),
               ),
             ],
           ),
@@ -252,6 +268,7 @@ class _NewLocalBookPageState extends State<NewLocalBookPage> {
     );
   }
 }
+
 
 extension on String {
   bool isNumber() {

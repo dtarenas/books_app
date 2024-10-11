@@ -1,8 +1,9 @@
-import 'package:books_app/pages/sections/new_book_page.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../repository/firebase_api.dart';
+import 'new_book_page.dart';
 
 class MyBooksPage extends StatefulWidget {
   const MyBooksPage({super.key});
@@ -16,7 +17,7 @@ class _MyBooksPageState extends State<MyBooksPage> {
 
   void _onAddButtonClicked() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const NewBookPage()));
+        context, MaterialPageRoute(builder: (context) => const NewLocalBookPage()));
   }
 
   void _showAlertDialog(BuildContext context, QueryDocumentSnapshot book) {
