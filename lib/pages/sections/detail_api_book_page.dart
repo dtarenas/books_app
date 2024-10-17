@@ -15,6 +15,7 @@ class _DetailApiBookPageState extends State<DetailApiBookPage> {
 
   _DetailApiBookPageState(this.book);
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
